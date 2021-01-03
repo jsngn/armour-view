@@ -28,18 +28,29 @@ package net.runelite.client.plugins.armourview;
 import javax.inject.Inject;
 
 import com.google.inject.Provides;
-import net.runelite.api.Client;
+import net.runelite.api.*;
+import net.runelite.api.events.BeforeRender;
+import net.runelite.api.kit.KitType;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.armourview.ArmourViewOverlay;
 import net.runelite.client.ui.overlay.OverlayManager;
+
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @PluginDescriptor(
         name = "Armour View",
         description = "Overlays clothing items for fashionscape"
 )
-public class ArmourViewPlugin extends Plugin {
+@Slf4j
+public class ArmourViewPlugin extends Plugin
+{
+    private static final Set<Integer> overlays = new HashSet<>();
+
     @Inject
     private Client client;
 
@@ -49,19 +60,33 @@ public class ArmourViewPlugin extends Plugin {
     @Inject
     private OverlayManager overlayManager;
 
-    @Inject
-    private ArmourViewOverlay overlay;
-
-    @Override
-    protected void startUp() throws Exception
+    @Subscribe
+    public void onBeforeRender(BeforeRender r)
     {
-        overlayManager.add(overlay);
-    }
+        if (client.getGameState() != GameState.LOGGED_IN)
+        {
+            return;
+        }
 
-    @Override
-    protected void shutDown() throws Exception
-    {
-        overlayManager.remove(overlay);
+        Player player = client.getLocalPlayer();
+        if (player == null)
+        {
+            return;
+        }
+
+        PlayerComposition comp = player.getPlayerComposition();
+        int[] itemIDs = comp.getEquipmentIds();
+        itemIDs[KitType.HAIR.getIndex()] = config.headIDConfig() + 512;
+        itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
+        itemIDs[KitType.LEGS.getIndex()] = config.legsIDConfig() + 512;
+        itemIDs[KitType.BOOTS.getIndex()] = config.bootsIDConfig() + 512;
+        itemIDs[KitType.CAPE.getIndex()] = config.capeIDConfig() + 512;
+        itemIDs[KitType.AMULET.getIndex()] = config.amuletIDConfig() + 512;
+        itemIDs[KitType.WEAPON.getIndex()] = config.weaponIDConfig() + 512;
+        itemIDs[KitType.SHIELD.getIndex()] = config.shieldIDConfig() + 512;
+        itemIDs[KitType.HANDS.getIndex()] = config.handsIDConfig() + 512;
+
+        comp.setHash();
     }
 
     @Provides
