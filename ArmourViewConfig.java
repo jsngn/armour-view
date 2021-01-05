@@ -34,19 +34,27 @@ public interface ArmourViewConfig extends Config
 {
     @ConfigItem(
             position = 1,
+            keyName = "headConfig",
+            name = "Change head item",
+            description = "ID of a head slot equipment"
+    )
+    default boolean headConfig() { return false; }
+
+    @ConfigItem(
+            position = 2,
             keyName = "headIDConfig",
             name = "Head Slot Item ID",
             description = "ID of a head slot equipment"
     )
     default int headIDConfig() { return 1048; } // white party hat
 
-    @ConfigItem(
-            position = 2,
-            keyName = "torsoIDConfig",
-            name = "Torso Slot Item ID",
-            description = "ID of a torso slot equipment"
-    )
-    default int torsoIDConfig() { return 1833; } // desert shirt
+//    @ConfigItem(
+//            position = 2,
+//            keyName = "torsoIDConfig",
+//            name = "Torso Slot Item ID",
+//            description = "ID of a torso slot equipment"
+//    )
+//    default int torsoIDConfig() { return 1833; } // desert shirt
 
     @ConfigItem(
             position = 3,

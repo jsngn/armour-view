@@ -35,21 +35,23 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.ui.overlay.OverlayManager;
 
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @PluginDescriptor(
         name = "Armour View",
-        description = "Overlays clothing items for fashionscape"
+        description = "Overlays clothing items for fashionscape",
+        enabledByDefault = false
 )
 @Slf4j
 public class ArmourViewPlugin extends Plugin
 {
-    private static final Set<Integer> overlays = new HashSet<>();
+    private int equippedHeadID, equippedTorsoID, equippedLegsID, equippedBootsID, equippedCapeID, equippedAmuletID,
+            equippedWeaponID, equippedShieldID, equippedHandsID;
 
     @Inject
     private Client client;
@@ -57,11 +59,8 @@ public class ArmourViewPlugin extends Plugin
     @Inject
     private ArmourViewConfig config;
 
-    @Inject
-    private OverlayManager overlayManager;
-
-    @Subscribe
-    public void onBeforeRender(BeforeRender r)
+    @Override
+    protected void shutDown() throws Exception
     {
         if (client.getGameState() != GameState.LOGGED_IN)
         {
@@ -74,10 +73,62 @@ public class ArmourViewPlugin extends Plugin
             return;
         }
 
+        log.debug("shutdown initiated; restoring actual equipment");
+
         PlayerComposition comp = player.getPlayerComposition();
         int[] itemIDs = comp.getEquipmentIds();
-        itemIDs[KitType.HAIR.getIndex()] = config.headIDConfig() + 512;
-        itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
+        itemIDs[KitType.HEAD.getIndex()] = equippedHeadID + 512;
+        itemIDs[KitType.TORSO.getIndex()] = equippedTorsoID + 512;
+        itemIDs[KitType.LEGS.getIndex()] = equippedLegsID + 512;
+        itemIDs[KitType.BOOTS.getIndex()] = equippedBootsID + 512;
+        itemIDs[KitType.CAPE.getIndex()] = equippedCapeID + 512;
+        itemIDs[KitType.AMULET.getIndex()] = equippedAmuletID + 512;
+        itemIDs[KitType.WEAPON.getIndex()] = equippedWeaponID + 512;
+        itemIDs[KitType.SHIELD.getIndex()] = equippedShieldID + 512;
+        itemIDs[KitType.HANDS.getIndex()] = equippedHandsID + 512;
+
+        comp.setHash();
+    }
+
+    @Subscribe
+    public void onBeforeRender(BeforeRender r)
+    {
+        if (client.getGameState() != GameState.LOGGED_IN)
+        {
+            return;
+        }
+
+        Player player = client.getLocalPlayer();
+        if (player == null)
+        {
+            log.debug("player is null");
+            return;
+        }
+
+        ItemContainer container = client.getItemContainer(InventoryID.EQUIPMENT);
+        assert container != null;
+
+        Item[] equipped = container.getItems();
+        equippedHeadID = equipped[EquipmentInventorySlot.HEAD.getSlotIdx()].getId();
+        equippedTorsoID = equipped[EquipmentInventorySlot.BODY.getSlotIdx()].getId();
+        equippedLegsID = equipped[EquipmentInventorySlot.LEGS.getSlotIdx()].getId();
+        equippedBootsID = equipped[EquipmentInventorySlot.BOOTS.getSlotIdx()].getId();
+        equippedCapeID = equipped[EquipmentInventorySlot.CAPE.getSlotIdx()].getId();
+        equippedAmuletID = equipped[EquipmentInventorySlot.AMULET.getSlotIdx()].getId();
+        equippedWeaponID = equipped[EquipmentInventorySlot.WEAPON.getSlotIdx()].getId();
+        equippedShieldID = equipped[EquipmentInventorySlot.SHIELD.getSlotIdx()].getId();
+        equippedHandsID = equipped[EquipmentInventorySlot.GLOVES.getSlotIdx()].getId();
+
+        PlayerComposition comp = player.getPlayerComposition();
+
+        int[] itemIDs = comp.getEquipmentIds();
+        if (config.headConfig()) {
+            itemIDs[KitType.HEAD.getIndex()] = config.headIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.HEAD.getIndex()] = equippedHeadID + 512;
+        }
+//        itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
         itemIDs[KitType.LEGS.getIndex()] = config.legsIDConfig() + 512;
         itemIDs[KitType.BOOTS.getIndex()] = config.bootsIDConfig() + 512;
         itemIDs[KitType.CAPE.getIndex()] = config.capeIDConfig() + 512;
@@ -85,6 +136,8 @@ public class ArmourViewPlugin extends Plugin
         itemIDs[KitType.WEAPON.getIndex()] = config.weaponIDConfig() + 512;
         itemIDs[KitType.SHIELD.getIndex()] = config.shieldIDConfig() + 512;
         itemIDs[KitType.HANDS.getIndex()] = config.handsIDConfig() + 512;
+
+        log.debug("equipped hands " + equippedHandsID);
 
         comp.setHash();
     }
