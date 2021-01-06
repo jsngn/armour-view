@@ -44,15 +44,15 @@ import java.util.Set;
 
 @PluginDescriptor(
         name = "Armour View",
-        description = "Overlays clothing items for fashionscape",
+        description = "Try on equipment for fashionscape",
         enabledByDefault = false
 )
 @Slf4j
 public class ArmourViewPlugin extends Plugin
 {
-    private int[] items;
+    private int[] items; // array of item IDs of everything user has equipped upon using plugin
 
-    private boolean hasNotChanged = true;
+    private boolean hasNotChanged = true; // whether user "changed" their equipment with plugin yet; only true at start
 
     @Inject
     private Client client;
@@ -60,6 +60,9 @@ public class ArmourViewPlugin extends Plugin
     @Inject
     private ArmourViewConfig config;
 
+    /**
+     * Restores user's actual equipment upon shuttin down plugin
+     */
     @Override
     protected void shutDown() throws Exception
     {
@@ -74,7 +77,7 @@ public class ArmourViewPlugin extends Plugin
             return;
         }
 
-        log.debug("shutdown initiated; restoring actual equipment");
+        log.debug("Shutdown initiated; restoring actual equipment");
 
         PlayerComposition comp = player.getPlayerComposition();
         int[] itemIDs = comp.getEquipmentIds();
@@ -85,6 +88,9 @@ public class ArmourViewPlugin extends Plugin
         comp.setHash();
     }
 
+    /**
+     * Equips player model with specified clothing from config
+     */
     @Subscribe
     public void onBeforeRender(BeforeRender r)
     {
@@ -96,18 +102,22 @@ public class ArmourViewPlugin extends Plugin
         Player player = client.getLocalPlayer();
         if (player == null)
         {
-            log.debug("player is null");
+            log.debug("Player is null");
             return;
         }
 
         ItemContainer container = client.getItemContainer(InventoryID.EQUIPMENT);
         if (container == null) {
-            log.debug("container is null");
+            log.debug("Container is null");
             return;
         }
 
         PlayerComposition comp = player.getPlayerComposition();
-        int[] itemIDs = comp.getEquipmentIds();
+
+        int[] itemIDs = comp.getEquipmentIds(); // get all player's local equipment IDs
+
+        /* keep record of user's equipment before they've changed anything
+        * otherwise change their items as they specify */
         if (hasNotChanged) {
             items = new int[itemIDs.length];
             for (int i = 0; i < itemIDs.length; i++) {
@@ -116,7 +126,7 @@ public class ArmourViewPlugin extends Plugin
             hasNotChanged = false;
         }
         else {
-
+            // unequipping some local items results in normal-looking player model
             for (int i = 0; i < itemIDs.length; i++) {
                 itemIDs[i] = items[i];
             }
