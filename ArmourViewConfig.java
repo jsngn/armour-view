@@ -35,10 +35,10 @@ public interface ArmourViewConfig extends Config
     @ConfigItem(
             position = 1,
             keyName = "headConfig",
-            name = "Change head item",
-            description = "ID of a head slot equipment"
+            name = "Change Head Item",
+            description = "Would you like to try on a head slot item?"
     )
-    default boolean headConfig() { return false; }
+    default boolean headConfig() { return true; }
 
     @ConfigItem(
             position = 2,
@@ -48,16 +48,48 @@ public interface ArmourViewConfig extends Config
     )
     default int headIDConfig() { return 1048; } // white party hat
 
-//    @ConfigItem(
-//            position = 2,
-//            keyName = "torsoIDConfig",
-//            name = "Torso Slot Item ID",
-//            description = "ID of a torso slot equipment"
-//    )
-//    default int torsoIDConfig() { return 1833; } // desert shirt
-
     @ConfigItem(
             position = 3,
+            keyName = "hairConfig",
+            name = "Change Hair Item",
+            description = "Would you like to try on a hair slot item?"
+    )
+    default boolean hairConfig() { return true; }
+
+    @ConfigItem(
+            position = 4,
+            keyName = "hairIDConfig",
+            name = "Hair Slot Item ID",
+            description = "ID of a hair slot equipment"
+    )
+    default int hairIDConfig() { return 23886; } // crystal helm basic
+
+    @ConfigItem(
+            position = 5,
+            keyName = "torsoConfig",
+            name = "Change Torso Item",
+            description = "Would you like to try on a torso slot item?"
+    )
+    default boolean torsoConfig() { return true; }
+
+    @ConfigItem(
+            position = 6,
+            keyName = "torsoIDConfig",
+            name = "Torso Slot Item ID",
+            description = "ID of a torso slot equipment"
+    )
+    default int torsoIDConfig() { return 1833; } // desert shirt
+
+    @ConfigItem(
+            position = 7,
+            keyName = "legsConfig",
+            name = "Change Legs Item",
+            description = "Would you like to try on a legs slot item?"
+    )
+    default boolean legsConfig() { return true; }
+
+    @ConfigItem(
+            position = 8,
             keyName = "legsIDConfig",
             name = "Legs Slot Item ID",
             description = "ID of a legs slot equipment"
@@ -65,7 +97,15 @@ public interface ArmourViewConfig extends Config
     default int legsIDConfig() { return 6390; } // desert legs
 
     @ConfigItem(
-            position = 4,
+            position = 9,
+            keyName = "bootsConfig",
+            name = "Change Boots Item",
+            description = "Would you like to try on a boots slot item?"
+    )
+    default boolean bootsConfig() { return true; }
+
+    @ConfigItem(
+            position = 10,
             keyName = "bootsIDConfig",
             name = "Boots Slot Item ID",
             description = "ID of a boots slot equipment"
@@ -73,7 +113,15 @@ public interface ArmourViewConfig extends Config
     default int bootsIDConfig() { return 1837; } // desert boots
 
     @ConfigItem(
-            position = 5,
+            position = 11,
+            keyName = "capeConfig",
+            name = "Change Cape Item",
+            description = "Would you like to try on a cape slot item?"
+    )
+    default boolean capeConfig() { return true; }
+
+    @ConfigItem(
+            position = 12,
             keyName = "capeIDConfig",
             name = "Cape Slot Item ID",
             description = "ID of a cape slot equipment"
@@ -81,7 +129,15 @@ public interface ArmourViewConfig extends Config
     default int capeIDConfig() { return 1052; } // cape of legends
 
     @ConfigItem(
-            position = 6,
+            position = 13,
+            keyName = "amuletConfig",
+            name = "Change Amulet Item",
+            description = "Would you like to try on an amulet slot item?"
+    )
+    default boolean amuletConfig() { return true; }
+
+    @ConfigItem(
+            position = 14,
             keyName = "amuletIDConfig",
             name = "Amulet Slot Item ID",
             description = "ID of a amulet slot equipment"
@@ -89,7 +145,15 @@ public interface ArmourViewConfig extends Config
     default int amuletIDConfig() { return 1654; } // gold necklace
 
     @ConfigItem(
-            position = 7,
+            position = 15,
+            keyName = "weaponConfig",
+            name = "Change Weapon Item",
+            description = "Would you like to try on a weapon slot item?"
+    )
+    default boolean weaponConfig() { return true; }
+
+    @ConfigItem(
+            position = 16,
             keyName = "weaponIDConfig",
             name = "Weapon Slot Item ID",
             description = "ID of a weapon slot equipment"
@@ -97,7 +161,15 @@ public interface ArmourViewConfig extends Config
     default int weaponIDConfig() { return 1279; } // iron sword
 
     @ConfigItem(
-            position = 8,
+            position = 17,
+            keyName = "shieldConfig",
+            name = "Change Shield Item",
+            description = "Would you like to try on a shield slot item?"
+    )
+    default boolean shieldConfig() { return true; }
+
+    @ConfigItem(
+            position = 18,
             keyName = "shieldIDConfig",
             name = "Shield Slot Item ID",
             description = "ID of a shield slot equipment"
@@ -105,7 +177,15 @@ public interface ArmourViewConfig extends Config
     default int shieldIDConfig() { return 1177; } // steel sq shield
 
     @ConfigItem(
-            position = 9,
+            position = 19,
+            keyName = "handsConfig",
+            name = "Change Hands Item",
+            description = "Would you like to try on a hands slot item?"
+    )
+    default boolean handsConfig() { return true; }
+
+    @ConfigItem(
+            position = 20,
             keyName = "handsIDConfig",
             name = "Hands Slot Item ID",
             description = "ID of a hands slot equipment"

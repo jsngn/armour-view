@@ -50,8 +50,13 @@ import java.util.Set;
 @Slf4j
 public class ArmourViewPlugin extends Plugin
 {
-    private int equippedHeadID, equippedTorsoID, equippedLegsID, equippedBootsID, equippedCapeID, equippedAmuletID,
-            equippedWeaponID, equippedShieldID, equippedHandsID;
+    private int equippedHeadID, equippedTorsoID, equippedLegsID, equippedBootsID, equippedCapeID,
+            equippedAmuletID, equippedWeaponID, equippedShieldID, equippedHandsID;
+
+    private int equippedHairID = Integer.MIN_VALUE;
+    private int[] items;
+
+    private boolean hasNotChanged = true;
 
     @Inject
     private Client client;
@@ -77,15 +82,9 @@ public class ArmourViewPlugin extends Plugin
 
         PlayerComposition comp = player.getPlayerComposition();
         int[] itemIDs = comp.getEquipmentIds();
-        itemIDs[KitType.HEAD.getIndex()] = equippedHeadID + 512;
-        itemIDs[KitType.TORSO.getIndex()] = equippedTorsoID + 512;
-        itemIDs[KitType.LEGS.getIndex()] = equippedLegsID + 512;
-        itemIDs[KitType.BOOTS.getIndex()] = equippedBootsID + 512;
-        itemIDs[KitType.CAPE.getIndex()] = equippedCapeID + 512;
-        itemIDs[KitType.AMULET.getIndex()] = equippedAmuletID + 512;
-        itemIDs[KitType.WEAPON.getIndex()] = equippedWeaponID + 512;
-        itemIDs[KitType.SHIELD.getIndex()] = equippedShieldID + 512;
-        itemIDs[KitType.HANDS.getIndex()] = equippedHandsID + 512;
+        for (int i = 0; i < itemIDs.length; i++) {
+            itemIDs[i] = items[i];
+        }
 
         comp.setHash();
     }
@@ -106,7 +105,10 @@ public class ArmourViewPlugin extends Plugin
         }
 
         ItemContainer container = client.getItemContainer(InventoryID.EQUIPMENT);
-        assert container != null;
+        if (container == null) {
+            log.debug("container is null");
+            return;
+        }
 
         Item[] equipped = container.getItems();
         equippedHeadID = equipped[EquipmentInventorySlot.HEAD.getSlotIdx()].getId();
@@ -122,22 +124,91 @@ public class ArmourViewPlugin extends Plugin
         PlayerComposition comp = player.getPlayerComposition();
 
         int[] itemIDs = comp.getEquipmentIds();
+        if (hasNotChanged) {
+            items = new int[itemIDs.length];
+            for (int i = 0; i < itemIDs.length; i++) {
+                items[i] = itemIDs[i];
+            }
+            hasNotChanged = false;
+        }
+
+        if (equippedHairID == Integer.MIN_VALUE) {
+            equippedHairID = comp.getKitId(KitType.HAIR); //itemIDs[KitType.HAIR.getIndex()];
+            log.debug("hello!!!!");
+            log.debug("hair is " + itemIDs[KitType.HAIR.getIndex()]);
+            log.debug("hair kit id is " + comp.getKitId(KitType.HAIR));
+        }
+
         if (config.headConfig()) {
             itemIDs[KitType.HEAD.getIndex()] = config.headIDConfig() + 512;
         }
         else {
             itemIDs[KitType.HEAD.getIndex()] = equippedHeadID + 512;
         }
-//        itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
-        itemIDs[KitType.LEGS.getIndex()] = config.legsIDConfig() + 512;
-        itemIDs[KitType.BOOTS.getIndex()] = config.bootsIDConfig() + 512;
-        itemIDs[KitType.CAPE.getIndex()] = config.capeIDConfig() + 512;
-        itemIDs[KitType.AMULET.getIndex()] = config.amuletIDConfig() + 512;
-        itemIDs[KitType.WEAPON.getIndex()] = config.weaponIDConfig() + 512;
-        itemIDs[KitType.SHIELD.getIndex()] = config.shieldIDConfig() + 512;
-        itemIDs[KitType.HANDS.getIndex()] = config.handsIDConfig() + 512;
 
-        log.debug("equipped hands " + equippedHandsID);
+        if (config.hairConfig()) {
+            itemIDs[KitType.HAIR.getIndex()] = config.hairIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.HAIR.getIndex()] = equippedHairID + 512;
+            log.debug("hair is " + itemIDs[KitType.HAIR.getIndex()]);
+        }
+
+        if (config.torsoConfig()) {
+            itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.TORSO.getIndex()] = equippedTorsoID + 512;
+        }
+
+        if (config.legsConfig()) {
+            itemIDs[KitType.LEGS.getIndex()] = config.legsIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.LEGS.getIndex()] = equippedLegsID + 512;
+        }
+
+        if (config.bootsConfig()) {
+            itemIDs[KitType.BOOTS.getIndex()] = config.bootsIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.BOOTS.getIndex()] = equippedBootsID + 512;
+        }
+
+        if (config.capeConfig()) {
+            itemIDs[KitType.CAPE.getIndex()] = config.capeIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.CAPE.getIndex()] = equippedCapeID + 512;
+        }
+
+        if (config.amuletConfig()) {
+            itemIDs[KitType.AMULET.getIndex()] = config.amuletIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.AMULET.getIndex()] = equippedAmuletID + 512;
+        }
+
+        if (config.weaponConfig()) {
+            itemIDs[KitType.WEAPON.getIndex()] = config.weaponIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.WEAPON.getIndex()] = equippedWeaponID + 512;
+        }
+
+        if (config.shieldConfig()) {
+            itemIDs[KitType.SHIELD.getIndex()] = config.shieldIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.SHIELD.getIndex()] = equippedShieldID + 512;
+        }
+
+        if (config.handsConfig()) {
+            itemIDs[KitType.HANDS.getIndex()] = config.handsIDConfig() + 512;
+        }
+        else {
+            itemIDs[KitType.HANDS.getIndex()] = equippedHandsID + 512;
+        }
 
         comp.setHash();
     }
