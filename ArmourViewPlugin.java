@@ -50,10 +50,6 @@ import java.util.Set;
 @Slf4j
 public class ArmourViewPlugin extends Plugin
 {
-    private int equippedHeadID, equippedTorsoID, equippedLegsID, equippedBootsID, equippedCapeID,
-            equippedAmuletID, equippedWeaponID, equippedShieldID, equippedHandsID;
-
-    private int equippedHairID = Integer.MIN_VALUE;
     private int[] items;
 
     private boolean hasNotChanged = true;
@@ -110,19 +106,7 @@ public class ArmourViewPlugin extends Plugin
             return;
         }
 
-        Item[] equipped = container.getItems();
-        equippedHeadID = equipped[EquipmentInventorySlot.HEAD.getSlotIdx()].getId();
-        equippedTorsoID = equipped[EquipmentInventorySlot.BODY.getSlotIdx()].getId();
-        equippedLegsID = equipped[EquipmentInventorySlot.LEGS.getSlotIdx()].getId();
-        equippedBootsID = equipped[EquipmentInventorySlot.BOOTS.getSlotIdx()].getId();
-        equippedCapeID = equipped[EquipmentInventorySlot.CAPE.getSlotIdx()].getId();
-        equippedAmuletID = equipped[EquipmentInventorySlot.AMULET.getSlotIdx()].getId();
-        equippedWeaponID = equipped[EquipmentInventorySlot.WEAPON.getSlotIdx()].getId();
-        equippedShieldID = equipped[EquipmentInventorySlot.SHIELD.getSlotIdx()].getId();
-        equippedHandsID = equipped[EquipmentInventorySlot.GLOVES.getSlotIdx()].getId();
-
         PlayerComposition comp = player.getPlayerComposition();
-
         int[] itemIDs = comp.getEquipmentIds();
         if (hasNotChanged) {
             items = new int[itemIDs.length];
@@ -131,86 +115,54 @@ public class ArmourViewPlugin extends Plugin
             }
             hasNotChanged = false;
         }
-
-        if (equippedHairID == Integer.MIN_VALUE) {
-            equippedHairID = comp.getKitId(KitType.HAIR); //itemIDs[KitType.HAIR.getIndex()];
-            log.debug("hello!!!!");
-            log.debug("hair is " + itemIDs[KitType.HAIR.getIndex()]);
-            log.debug("hair kit id is " + comp.getKitId(KitType.HAIR));
-        }
-
-        if (config.headConfig()) {
-            itemIDs[KitType.HEAD.getIndex()] = config.headIDConfig() + 512;
-        }
         else {
-            itemIDs[KitType.HEAD.getIndex()] = equippedHeadID + 512;
-        }
 
-        if (config.hairConfig()) {
-            itemIDs[KitType.HAIR.getIndex()] = config.hairIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.HAIR.getIndex()] = equippedHairID + 512;
-            log.debug("hair is " + itemIDs[KitType.HAIR.getIndex()]);
-        }
+            for (int i = 0; i < itemIDs.length; i++) {
+                itemIDs[i] = items[i];
+            }
 
-        if (config.torsoConfig()) {
-            itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.TORSO.getIndex()] = equippedTorsoID + 512;
-        }
+            if (config.headConfig()) {
+                itemIDs[KitType.HEAD.getIndex()] = config.headIDConfig() + 512;
+            }
 
-        if (config.legsConfig()) {
-            itemIDs[KitType.LEGS.getIndex()] = config.legsIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.LEGS.getIndex()] = equippedLegsID + 512;
-        }
+            if (config.hairConfig()) {
+                itemIDs[KitType.HAIR.getIndex()] = config.hairIDConfig() + 512;
+            }
 
-        if (config.bootsConfig()) {
-            itemIDs[KitType.BOOTS.getIndex()] = config.bootsIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.BOOTS.getIndex()] = equippedBootsID + 512;
-        }
+            if (config.torsoConfig()) {
+                itemIDs[KitType.TORSO.getIndex()] = config.torsoIDConfig() + 512;
+            }
 
-        if (config.capeConfig()) {
-            itemIDs[KitType.CAPE.getIndex()] = config.capeIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.CAPE.getIndex()] = equippedCapeID + 512;
-        }
+            if (config.legsConfig()) {
+                itemIDs[KitType.LEGS.getIndex()] = config.legsIDConfig() + 512;
+            }
 
-        if (config.amuletConfig()) {
-            itemIDs[KitType.AMULET.getIndex()] = config.amuletIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.AMULET.getIndex()] = equippedAmuletID + 512;
-        }
+            if (config.bootsConfig()) {
+                itemIDs[KitType.BOOTS.getIndex()] = config.bootsIDConfig() + 512;
+            }
 
-        if (config.weaponConfig()) {
-            itemIDs[KitType.WEAPON.getIndex()] = config.weaponIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.WEAPON.getIndex()] = equippedWeaponID + 512;
-        }
+            if (config.capeConfig()) {
+                itemIDs[KitType.CAPE.getIndex()] = config.capeIDConfig() + 512;
+            }
 
-        if (config.shieldConfig()) {
-            itemIDs[KitType.SHIELD.getIndex()] = config.shieldIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.SHIELD.getIndex()] = equippedShieldID + 512;
-        }
+            if (config.amuletConfig()) {
+                itemIDs[KitType.AMULET.getIndex()] = config.amuletIDConfig() + 512;
+            }
 
-        if (config.handsConfig()) {
-            itemIDs[KitType.HANDS.getIndex()] = config.handsIDConfig() + 512;
-        }
-        else {
-            itemIDs[KitType.HANDS.getIndex()] = equippedHandsID + 512;
-        }
+            if (config.weaponConfig()) {
+                itemIDs[KitType.WEAPON.getIndex()] = config.weaponIDConfig() + 512;
+            }
 
-        comp.setHash();
+            if (config.shieldConfig()) {
+                itemIDs[KitType.SHIELD.getIndex()] = config.shieldIDConfig() + 512;
+            }
+
+            if (config.handsConfig()) {
+                itemIDs[KitType.HANDS.getIndex()] = config.handsIDConfig() + 512;
+            }
+
+            comp.setHash();
+        }
     }
 
     @Provides
